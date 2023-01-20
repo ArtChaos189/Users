@@ -1,27 +1,20 @@
-import React from "react";
 import { Skeleton } from "./Skeleton";
+
 import { User } from "./User";
 
-export const Users = ({
-  items,
-  isLoading,
-  searchValue,
-  onChangeSearchValue,
-  onClickinvite,
-  invites,
-  onClickSendInvites,
-}) => {
-  console.log(searchValue);
+export const Users = ({ items, isLoading, searchValue, setSearchValue, invites, onClickInvites, onSuccess }) => {
   return (
     <>
       <div className="search">
         <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
         </svg>
-        <input value={searchValue} onChange={onChangeSearchValue} type="text" placeholder="Найти пользователя..." />
+        <input onChange={(e) => setSearchValue(e.target.value)} type="text" placeholder="Найти пользователя..." />
       </div>
       {isLoading ? (
         <div className="skeleton-list">
+          <Skeleton />
+          <Skeleton />
           <Skeleton />
           <Skeleton />
           <Skeleton />
@@ -31,19 +24,18 @@ export const Users = ({
           {items
             .filter((obj) => {
               const FullName = (obj.first_name + obj.last_name).toLowerCase();
-
               return (
-                FullName.includes(searchValue.toLowerCase()) ||
+                FullName.toLowerCase().includes(searchValue.toLowerCase()) ||
                 obj.email.toLowerCase().includes(searchValue.toLowerCase())
               );
             })
             .map((obj) => (
-              <User isInvite={invites.includes(obj.id)} onClickinvite={onClickinvite} key={obj.id} {...obj} />
+              <User isInvites={invites.includes(obj.id)} onClickInvites={onClickInvites} key={obj.id} {...obj} />
             ))}
         </ul>
       )}
       {invites.length > 0 && (
-        <button onClick={onClickSendInvites} className="send-invite-btn">
+        <button onClick={onSuccess} className="send-invite-btn">
           Отправить приглашение
         </button>
       )}

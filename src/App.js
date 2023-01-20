@@ -1,14 +1,27 @@
-import React, { useState, useEffect } from "react";
-import "./index.scss";
+import { useEffect, useState } from "react";
+
 import { Success } from "./components/Success";
+
 import { Users } from "./components/Users";
+
+import "./index.scss";
+// Тут список пользователей: https://reqres.in/api/users
 
 function App() {
   const [users, setUsers] = useState([]);
-  const [isLoading, setLoading] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(true);
+
   const [searchValue, setSearchValue] = useState("");
+
   const [invites, setInvites] = useState([]);
+
   const [success, setSuccess] = useState(false);
+
+  const onSuccess = () => {
+    setSuccess(true);
+  };
+
   useEffect(() => {
     fetch("https://reqres.in/api/users")
       .then((res) => res.json())
@@ -19,23 +32,15 @@ function App() {
         console.warn(err);
         alert("Ошибка при получении пользователей");
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const onChangeSearchValue = (event) => {
-    setSearchValue(event.target.value);
-  };
-
-  const onClickinvite = (id) => {
+  const onClickInvites = (id) => {
     if (invites.includes(id)) {
       setInvites((prev) => prev.filter((_id) => _id !== id));
     } else {
       setInvites((prev) => [...prev, id]);
     }
-  };
-
-  const onClickSendInvites = () => {
-    setSuccess(true);
   };
 
   return (
@@ -44,13 +49,13 @@ function App() {
         <Success count={invites.length} />
       ) : (
         <Users
-          onClickSendInvites={onClickSendInvites}
+          onSuccess={onSuccess}
+          onClickInvites={onClickInvites}
           invites={invites}
-          onClickinvite={onClickinvite}
-          onChangeSearchValue={onChangeSearchValue}
+          setSearchValue={setSearchValue}
           searchValue={searchValue}
-          items={users}
           isLoading={isLoading}
+          items={users}
         />
       )}
     </div>
